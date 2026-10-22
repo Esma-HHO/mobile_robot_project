@@ -27,7 +27,7 @@ Komut: /cmd_vel üzerinden sıfır hız komutu gönderildi.
 Gözlem: Robot durdu.
 Sonuç: Başarılı.
 
-![Linear acceleration when robot stops moving](linear_acceleration_x_stop.png)
+![Linear acceleration when robot stops moving](linear_acceleration_stop.png)
 
 
 ## Test 4 — IMU Veri Yayını
