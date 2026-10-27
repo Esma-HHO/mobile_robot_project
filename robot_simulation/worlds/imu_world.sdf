@@ -81,6 +81,11 @@ gz service -s /world/empty/create \
       filename="gz-sim-contact-system"
       name="gz::sim::systems::Contact">
     </plugin>
+    <!-- Camera sensor system -->
+    <plugin
+      filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
+    </plugin>
 
     <light type="directional" name="sun">
       <cast_shadows>true</cast_shadows>

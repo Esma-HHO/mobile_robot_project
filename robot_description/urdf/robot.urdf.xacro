@@ -4,6 +4,12 @@
   <!-- IMU sensor definition -->
   <xacro:include filename="$(find robot_description)/urdf/imu.xacro"/>
 
+  <!-- Camera sensor definition -->
+  <xacro:include filename="$(find robot_description)/urdf/camera.xacro"/>
+
+  <!-- Contact sensor definition -->
+  <xacro:include filename="$(find robot_description)/urdf/contact_sensor.xacro"/>
+
   <!-- ==================== MATERIALS ==================== -->
 
   <material name="pink">
