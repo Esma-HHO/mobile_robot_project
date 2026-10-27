@@ -1,0 +1,35 @@
+Type: sensor_msgs/msg/Image
+
+Publisher count: 1
+
+Node name: ros_gz_bridge
+Node namespace: /
+Topic type: sensor_msgs/msg/Image
+Topic type hash: RIHS01_d31d41a9a4c4bc8eae9be757b0beed306564f7526c88ea6a4588fb9582527d47
+Endpoint type: PUBLISHER
+GID: 01.0f.f0.e5.f3.28.39.09.00.00.00.00.00.00.13.03
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): KEEP_LAST (10)
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 1
+
+Node name: rviz2
+Node namespace: /
+Topic type: sensor_msgs/msg/Image
+Topic type hash: RIHS01_d31d41a9a4c4bc8eae9be757b0beed306564f7526c88ea6a4588fb9582527d47
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.f0.e5.f5.28.b5.51.00.00.00.00.00.00.2f.04
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): KEEP_LAST (5)
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite

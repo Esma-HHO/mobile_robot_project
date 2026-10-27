@@ -1,0 +1,5 @@
+- ros_topic_name: "/contact"
+  gz_topic_name: "/world/empty/model/mobile_robot/link/front_bumper_link/sensor/front_contact_sensor/contact"
+  ros_type_name: "ros_gz_interfaces/msg/Contacts"
+  gz_type_name: "gz.msgs.Contacts"
+  direction: GZ_TO_ROS
