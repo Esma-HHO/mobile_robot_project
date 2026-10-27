@@ -26,8 +26,8 @@ def generate_launch_description():
     world_file = os.path.join(
         robot_simulation_dir,
         'worlds',
-        'test_world.world'
-    )
+        'obstacle_world.sdf'
+)      
 
     robot_description = {
         'robot_description': Command(['xacro ', xacro_file])
