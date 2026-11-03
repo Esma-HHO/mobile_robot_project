@@ -165,16 +165,16 @@ gz service -s /world/empty/create \
 
     </model>
     
-    <!-- LEFT OBSTACLE -->
-    <model name="left_obstacle">
+    <!-- Alternating gates create a slalom: the free passage switches sides. -->
+    <model name="obstacle_2_right_block">
         <static>true</static>
-        <pose>3.0 1.5 0.4 0 0 0</pose>
+        <pose>3.4 -1.1 0.4 0 0 0</pose>
 
         <link name="link">
             <collision name="collision">
                 <geometry>
                     <box>
-                        <size>0.8 0.8 0.8</size>
+                        <size>0.7 3.6 0.8</size>
                     </box>
                 </geometry>
             </collision>
@@ -182,7 +182,7 @@ gz service -s /world/empty/create \
             <visual name="visual">
                 <geometry>
                     <box>
-                        <size>0.8 0.8 0.8</size>
+                        <size>0.7 3.6 0.8</size>
                     </box>
                 </geometry>
 
@@ -194,16 +194,15 @@ gz service -s /world/empty/create \
         </link>
     </model>
 
-    <!-- RIGHT OBSTACLE -->
-    <model name="right_obstacle">
+    <model name="obstacle_3_left_block">
         <static>true</static>
-        <pose>3.0 -1.5 0.4 0 0 0</pose>
+        <pose>6.2 1.9 0.4 0 0 0</pose>
 
         <link name="link">
             <collision name="collision">
                 <geometry>
                     <box>
-                        <size>0.8 0.8 0.8</size>
+                        <size>0.7 3.6 0.8</size>
                     </box>
                 </geometry>
             </collision>
@@ -211,7 +210,7 @@ gz service -s /world/empty/create \
             <visual name="visual">
                 <geometry>
                     <box>
-                        <size>0.8 0.8 0.8</size>
+                        <size>0.7 3.6 0.8</size>
                     </box>
                 </geometry>
 
@@ -223,27 +222,34 @@ gz service -s /world/empty/create \
         </link>
     </model>
 
-    <!-- FRONT WALL -->
-    <model name="front_wall">
+    <!-- Course side rails keep the alternating gates in the test route. -->
+    <model name="course_left_rail">
         <static>true</static>
-        <pose>5.0 0 0.5 0 0 0</pose>
+        <pose>5.5 4.5 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision"><geometry><box><size>9.0 0.2 1.0</size></box></geometry></collision>
+            <visual name="visual"><geometry><box><size>9.0 0.2 1.0</size></box></geometry></visual>
+        </link>
+    </model>
+    <model name="course_right_rail">
+        <static>true</static>
+        <pose>5.5 -4.5 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision"><geometry><box><size>9.0 0.2 1.0</size></box></geometry></collision>
+            <visual name="visual"><geometry><box><size>9.0 0.2 1.0</size></box></geometry></visual>
+        </link>
+    </model>
 
+    <!-- End-of-course wall; it is far enough away to reach after the slalom. -->
+    <model name="course_end_wall">
+        <static>true</static>
+        <pose>10.2 0 0.5 0 0 0</pose>
         <link name="link">
             <collision name="collision">
-                <geometry>
-                    <box>
-                        <size>0.2 4.0 1.0</size>
-                    </box>
-                </geometry>
+                <geometry><box><size>0.2 6.0 1.0</size></box></geometry>
             </collision>
-
             <visual name="visual">
-                <geometry>
-                    <box>
-                        <size>0.2 4.0 1.0</size>
-                    </box>
-                </geometry>
-
+                <geometry><box><size>0.2 6.0 1.0</size></box></geometry>
                 <material>
                     <ambient>0.7 0.3 0.8 1</ambient>
                     <diffuse>0.7 0.3 0.8 1</diffuse>
@@ -251,6 +257,6 @@ gz service -s /world/empty/create \
             </visual>
         </link>
     </model>
-    
+
   </world>
 </sdf>
