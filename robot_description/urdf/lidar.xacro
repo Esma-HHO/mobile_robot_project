@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!-- Gazebo Sim GPU LiDAR mounted above the chassis. -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="lidar_sensor" params="parent name topic x:=0.0 y:=0.0 z:=0.12">
+    <link name="${name}_link">
+      <visual>
+        <geometry><cylinder radius="0.06" length="0.06"/></geometry>
+        <material name="dark_pink"/>
+      </visual>
+      <collision>
+        <geometry><cylinder radius="0.06" length="0.06"/></geometry>
+      </collision>
+      <inertial>
+        <mass value="0.1"/>
+        <inertia ixx="0.0001" ixy="0" ixz="0"
+                 iyy="0.0001" iyz="0" izz="0.0001"/>
+      </inertial>
+    </link>
+
+    <joint name="${name}_fixed_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+      <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+    </joint>
+
+    <gazebo reference="${name}_link">
+      <sensor name="${name}" type="gpu_lidar">
+        <pose>0 0 0 0 0 0</pose>
+        <topic>${topic}</topic>
+        <update_rate>10</update_rate>
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <gz_frame_id>${name}_link</gz_frame_id>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>360</samples>
+              <resolution>1</resolution>
+              <min_angle>-3.14159265</min_angle>
+              <max_angle>3.14159265</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.12</min>
+            <max>8.0</max>
+            <resolution>0.01</resolution>
+          </range>
+        </ray>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+</robot>
