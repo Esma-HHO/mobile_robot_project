@@ -70,6 +70,16 @@ def generate_launch_description():
         output='screen'
     )
 
+    odom_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        name='odom_bridge',
+        arguments=[
+            '/odom@nav_msgs/msg/Odometry[gz.msgs.Odometry'
+        ],
+        output='screen'
+    )
+
     imu_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
@@ -85,6 +95,16 @@ def generate_launch_description():
         arguments=[
             '/camera/image_raw@sensor_msgs/msg/Image[gz.msgs.Image',
             '/camera/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo'
+        ],
+        output='screen'
+    )
+
+    scan_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        name='scan_bridge',
+        arguments=[
+            '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan'
         ],
         output='screen'
     )
@@ -136,8 +156,10 @@ def generate_launch_description():
         robot_state_publisher,
         clock_bridge,
         cmd_vel_bridge,
+        odom_bridge,
         imu_bridge,
         camera_bridge,
+        scan_bridge,
         contact_bridge,
         spawn_robot,
         rviz_node
