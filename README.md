@@ -1,49 +1,186 @@
 # Mobile Robot Project
 
-ROS 2 and Gazebo Sim mobile robot with camera, IMU, contact sensor, 360-degree LiDAR, and reactive obstacle avoidance.
+A differential-drive mobile robot simulation developed using **ROS 2 Lyrical, Gazebo Jetty, and RViz 2**.
 
-## Requirements
+The project includes a custom URDF/Xacro robot model, four integrated sensors (Camera, IMU, Contact Sensor, and LiDAR), and a LiDAR-based reactive obstacle avoidance algorithm.
+
+Gazebo is used for robot simulation, while ROS 2 and RViz 2 are used for sensor communication and visualization.
+
+## 1. Requirements
+
+The project was developed and tested on Ubuntu 26.04 using:
 
 - ROS 2 Lyrical
-- Gazebo Jetty and `ros_gz`
-- `colcon`, `xacro`, `rviz2`
+- Gazebo Jetty
+- `ros_gz_sim`, `ros_gz_bridge`, `ros_gz_interfaces`
+- `robot_state_publisher`, `xacro`, `rviz2`
+- Python 3
+- `colcon`, `rosdep`
 
-## Build and run
+ROS 2, Gazebo, and the ROS–Gazebo integration packages must be installed before building the project.
 
-From the repository root in a ROS 2 Lyrical environment:
+## 2. Project Structure
+
+The repository contains three ROS 2 packages and a test results directory.
+
+```text
+mobile_robot_project/
+├── robot_description/
+│   ├── urdf/
+│   │   ├── robot.urdf.xacro
+│   │   ├── camera.xacro
+│   │   ├── imu.xacro
+│   │   ├── contact_sensor.xacro
+│   │   └── lidar.xacro
+│   ├── CMakeLists.txt
+│   └── package.xml
+│
+├── robot_simulation/
+│   ├── launch/
+│   │   └── robot_simulation.launch.py
+│   ├── config/
+│   │   ├── contact_bridge.yaml
+│   │   └── mobile_robot.rviz
+│   ├── worlds/
+│   │   ├── imu_world.sdf
+│   │   ├── test_world.world
+│   │   └── obstacle_world.sdf
+│   ├── CMakeLists.txt
+│   └── package.xml
+│
+├── robot_behavior/
+│   ├── robot_behavior/
+│   │   ├── __init__.py
+│   │   └── obstacle_avoidance.py
+│   ├── resource/
+│   ├── setup.py
+│   ├── setup.cfg
+│   └── package.xml
+│
+├── test_results/
+│   ├── camera/
+│   ├── contact/
+│   ├── lidar/
+│   ├── obstacle_world/
+│   └── imu_and_motion_tests.md
+│
+└── README.md
+```
+
+- **robot_description:** Robot model and sensor descriptions.
+- **robot_simulation:** Gazebo worlds, launch files, RViz configuration, and sensor bridges.
+- **robot_behavior:** LiDAR-based obstacle avoidance algorithm.
+- **test_results:** Sensor measurements, screenshots, and test reports.
+
+## 3. Installation and Build
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/Esma-HHO/mobile_robot_project.git
+cd mobile_robot_project
+```
+
+### Install Dependencies and Build
+
+Run the following commands from the repository root:
 
 ```bash
 source /opt/ros/lyrical/setup.bash
+
 rosdep install --from-paths . --ignore-src -r -y
+
 colcon build --symlink-install
+
 source install/setup.bash
+```
+
+**Note:** ROS 2 and Gazebo must already be installed, and `rosdep` must be initialized before running these commands.
+
+## 4. Running the Project
+
+### Start the Simulation
+
+From the repository root, run:
+
+```bash
 ros2 launch robot_simulation robot_simulation.launch.py
 ```
 
-The launch starts Gazebo, the robot, sensor bridges (including `/odom`), and RViz. The robot remains stationary because the behavior node is not started automatically. Start it explicitly in a second terminal when ready:
+This command launches Gazebo, spawns the robot, starts the sensor bridges, and opens RViz 2.
+
+The default simulation environment is `obstacle_world.sdf`.
+
+### Start Obstacle Avoidance
+
+Keep the simulation running and open a second terminal.
+
+Navigate to the repository root and execute:
 
 ```bash
 source /opt/ros/lyrical/setup.bash
 source install/setup.bash
+
 ros2 run robot_behavior obstacle_avoidance
 ```
 
-To inspect the scan separately, use `ros2 topic echo /scan --once` or select the enabled `LaserScan` display in RViz. The RViz fixed frame is `base_link`; the LiDAR frame is `lidar_link`.
+The robot uses LiDAR and odometry data to detect obstacles, select a turning direction, and continue moving when the path is clear.
 
-## Person 3: LiDAR and obstacle avoidance
 
-- `robot_description/urdf/lidar.xacro` defines the 360-degree GPU LiDAR: 360 horizontal samples, 10 Hz, 0.12–8.0 m range, mounted on `base_link`.
-- `robot_simulation/launch/robot_simulation.launch.py` bridges Gazebo's `/scan` (`gz.msgs.LaserScan`) to ROS 2 `/scan` (`sensor_msgs/msg/LaserScan`).
-- `robot_behavior/robot_behavior/obstacle_avoidance.py` subscribes to `/scan` and publishes `geometry_msgs/msg/Twist` on `/cmd_vel`.
+## 5. Sensors and ROS 2 Topics
 
-### Decision rule
+The robot includes four sensor types integrated into the Gazebo simulation.
 
-The node checks a broad forward sector (±0.80 rad). At or inside 0.90 m it chooses a turn using the near-front diagonal openings on each side, so a passage ahead-right or ahead-left counts even when it is not directly beside the robot. The side score uses a clearance percentile rather than the single nearest ray. It holds that direction throughout the obstacle to prevent left-right oscillation, and permits one emergency switch only when the chosen side is blocked and the opposite side is clearly open. It keeps turning until the full forward sector is clear beyond 1.20 m, then resumes forward motion at 0.20 m/s with a gentle heading correction. Turn speed is 0.55 rad/s. The test route is aligned with world +X, so the desired `course_heading` defaults to 0.0 rad. Odometry from `/odom` measures the robot's current yaw; avoidance turns are limited to a 90° deviation from the course heading. At that limit, it creeps forward at 0.08 m/s if the front distance remains above 0.90 m; otherwise it stops. For another straight route, set `course_heading` to that route's world-frame angle in radians. Positive angular velocity turns left. Missing odometry, invalid scan metadata, unusable front data, or a scan timeout (0.5 s) produces a zero-velocity command. Positive infinity is treated as no return up to the LiDAR maximum; NaN and negative infinity are discarded.
+| Sensor | ROS 2 Topic | Description |
+|---|---|---|
+| Camera | `/camera/image_raw` | Front-mounted RGB camera, 640 × 480, 30 Hz |
+| IMU | `/imu/data` | Orientation, angular velocity, and acceleration |
+| Contact Sensor | `/contact` | Front bumper collision detection |
+| LiDAR | `/scan` | 360° obstacle detection |
 
-The run terminal reports each motion-mode change immediately and prints the motion mode, commanded linear/angular speeds, front and side clearances, course error, and odometry state at least every 0.5 seconds.
+Sensor data is transferred from Gazebo to ROS 2 using the configured bridges.
 
-These values are ROS parameters on `obstacle_avoidance` and can be overridden in the launch file or with ROS parameter tools.
+Camera images and LiDAR measurements can be visualized in RViz 2.
 
-## Manual behavior check
+Robot movement commands are published through `/cmd_vel`, and odometry data is available through `/odom`.
 
-The obstacle world contains a first test box followed by alternating gate openings, side rails, and an end wall. Start the simulation first and confirm the robot is stationary, then run the behavior node in a second terminal. In RViz check the `/scan` display; in another terminal run `ros2 topic echo /cmd_vel`. The robot should turn away before reaching each barrier, keep its chosen turn direction until there is a wider forward gap, and move forward again. Stop the behavior node with Ctrl+C; the simulation can remain open for inspection. Record the Gazebo/RViz views and topic output for the project demonstration/report.
+## 6. Simulation and Test Results
+
+The repository includes Gazebo worlds used for sensor verification and obstacle avoidance testing.
+
+- **imu_world.sdf:** Initial robot and IMU simulation.
+- **test_world.world:** Camera and contact sensor testing with a static obstacle.
+- **obstacle_world.sdf:** Multi-obstacle environment used for navigation testing.
+
+Sensor and simulation tests were performed using Gazebo, ROS 2 topics, and RViz 2.
+
+Recorded measurements, screenshots, and test reports are available in the [`test_results`](test_results/) directory.
+
+## 10. Team Contributions
+
+### Person 1 — Esma Hacıhasanoğlu ([@Esma-HHO](https://github.com/Esma-HHO))
+**Robot Design, Differential Drive, and IMU**
+
+- Designed the robot body and differential-drive system.
+- Integrated the IMU sensor.
+- Configured robot movement and odometry.
+- Prepared the initial imu world.
+- Recorded movement and IMU test results.
+
+### Person 2 — Huriser Ergün ([@Hurisser](https://github.com/Hurisser))
+**Camera, Contact Sensor, and Simulation Integration**
+
+- Integrated and tested the camera and front contact sensor.
+- Configured Gazebo–ROS 2 sensor bridges.
+- Prepared test world and an extended obstacle environment.
+- Updated simulation launch and RViz configurations.
+- Recorded camera measurements and test reports.
+
+### Person 3 — Emine Ersöz ([@erszemine](https://github.com/erszemine))
+**LiDAR and Obstacle Avoidance**
+
+- Integrated the 360-degree LiDAR sensor.
+- Configured LiDAR publishing and RViz visualization.
+- Developed the reactive obstacle avoidance algorithm.
+- Further developed the obstacle world for navigation testing.
+- Recorded LiDAR measurements and obstacle avoidance test results.
